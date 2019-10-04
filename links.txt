@@ -1,0 +1,19 @@
+
+lora rasp e arduino
+https://www.dobitaobyte.com.br/lora-com-raspberry-e-arduino/
+
+mesh c lora
+https://nootropicdesign.com/projectlab/2018/10/20/lora-mesh-networking/
+
+exemplo ping pong c radiohead
+https://learn.adafruit.com/adafruit-feather-32u4-radio-with-lora-radio-module/using-the-rfm-9x-radio
+
+radiohead with ebyte
+https://github.com/MarcinWachowiak/LoRa-E32-TTL-1W
+
+lora gps
+https://github.com/mkshrps/tinyLoraTracker/blob/master/miniLoraTrackerGPS.ino
+
+git radiohead by adafruit
+https://github.com/adafruit/RadioHead
+
