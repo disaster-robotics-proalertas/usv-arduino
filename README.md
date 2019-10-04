@@ -19,7 +19,7 @@ The interconnection block diagram is shown in Fig. 2.
 
 ## Implementation
 The board has an Arduino Nano which receives two signals: button and PWM. Based on they, the Arduino control an relay allowing 5V from APM Power Module to be distributed to Raspberry Pi. This 5V also power on the second relay wich provides the 5V from UBEC to the PWM bus. However, an Emergency button in series with this second relay control signal can disable it disabling any servo or ESC action. To this functionality works, it is necessary remove any power source from servo or ESC to PWM bus. More details is available in Fig. 2.
-![](Arduino_usv_bb.png)
+![](arduino_usv_bb.png)
 Figure 2: Power Control Board schematic.
 The Reset/Shutdown signal to Raspberry Pi indicates the power operation. Running at Raspberry, a phyton script monitors the GPIO pin and executes reboot or shutdown operation according to it.
 
@@ -31,16 +31,17 @@ The power button can provides 4 operations as shown previously. The difference b
 
 Button operation:
 * Power on
-** Previous state: LED off
-** Procedure: press the power button
+  * Previous state: LED off
+  * Procedure: press the power button
 * Reset
-** Previous state: LED on
-** Procedure: press the power button (less than 1 second)
+  * Previous state: LED on
+  * Procedure: press the power button (less than 1 second)
 * Hard Reset
-** Previous state: LED on
-** Procedure: press the power button for 3 seconds
+  * Previous state: LED on
+  * Procedure: press the power button for 3 seconds
 * Shutdown
-** Previous state: LED on
-** Procedure: press the power button for 25 seconds or until the LED is stable off
+  * Previous state: LED on
+  * Procedure: press the power button for 25 seconds or until the LED is stable off
 This long time is necessary to eliminate any false intetion to shutting down.
-It is recommended disable PWM bus power through Emergency button every time when the robot is not in operation to prevent injures.
+
+It is **highly recommended** disable PWM bus power through Emergency button every time when the robot is not in operation to prevent injures.
