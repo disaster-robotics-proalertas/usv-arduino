@@ -1,9 +1,9 @@
-#include <SPI.h> // Not actually used but needed to compile
+//#include <SPI.h> // Not actually used but needed to compile
 #include <RH_E32.h>
 #include "SoftwareSerial.h"
 
-SoftwareSerial mySerial(7, 6);
-RH_E32  driver(&mySerial, 4, 5, 8);
+SoftwareSerial mySerial(7, 6); //rx , tx
+RH_E32  driver(&mySerial, 4, 5, 8); // m0,m1,aux
 
 void setup() 
 {

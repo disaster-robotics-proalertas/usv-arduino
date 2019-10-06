@@ -8,12 +8,6 @@
 
 // Mesh has much greater memory requirements, and you may need to limit the
 // max message length to prevent wierd crashes
-//#define RH_MESH_MAX_MESSAGE_LEN 20
-//#define RH_E32_MAX_PAYLOAD_LEN 20
-//#define RH_ROUTING_TABLE_SIZE 3
-//#define RH_DEFAULT_MAX_HOPS 5
-
-// changes to reduce ram usage:
 //RH_E32_h
 //#define RH_E32_MAX_PAYLOAD_LEN 30
 //RHDatagram_h
@@ -22,9 +16,8 @@
 //#define RH_DEFAULT_MAX_HOPS 10
 //#define RH_ROUTING_TABLE_SIZE 5
 
-
 #include <RHMesh.h>
-#include <SPI.h>
+//#include <SPI.h>
 #include <RH_E32.h>
 #include "SoftwareSerial.h"
 
@@ -36,33 +29,29 @@
 
 // Singleton instance of the radio driver
 SoftwareSerial mySerial(7, 6); //rx , tx
-RH_E32  driver(&mySerial, 4, 5, 8);
+RH_E32  driver(&mySerial, 4, 5, 8); // m0,m1,aux
 
 // Class to manage message delivery and receipt, using the driver declared above
 RHMesh manager(driver, CLIENT_ADDRESS);
 
 void setup() 
 {
+  //randomSeed(analogRead(0));
+
   Serial.begin(9600);
   while (!Serial) ;
 
   mySerial.begin(9600);
 
-/*
-  if (!driver.init()) {
-        Serial.println("driver init failed");  
-  } else {
-        Serial.println("driver init succeded");  
-  }
-  */
-  
+  pinMode(13,OUTPUT); // led pin
+
   if (!manager.init()){
     Serial.println("manager init failed");
   } else {
     Serial.println("manager init succeded");  
   } 
     
-  // Defaults after init are 434.0MHz, 0.05MHz AFC pull-in, modulation FSK_Rb2_4Fd36
+  // Defaults parameters must be: C0, 0, 0, 1A, 17, 47
 
   RH_E32 :: Parameters my_params;
   if (!driver.readParameters(my_params))
@@ -74,8 +63,39 @@ void setup()
   Serial.println(my_params.sped, HEX);
   Serial.println(my_params.chan, HEX);
   Serial.println(my_params.option, HEX);
-    
+
+  Serial.println("Ending setup");
 }
+
+
+// help to debug routing errors
+void printRoutingError(uint8_t ret){
+switch(ret){
+  case RH_ROUTER_ERROR_NONE:
+    Serial.println("route ok");
+    break;
+  case RH_ROUTER_ERROR_INVALID_LENGTH:
+    Serial.println("invalid lenght");
+    break;
+  case RH_ROUTER_ERROR_NO_ROUTE:
+    Serial.println("no route");
+    break;
+  case RH_ROUTER_ERROR_TIMEOUT:
+    Serial.println("timeout error");
+    break;
+  case RH_ROUTER_ERROR_NO_REPLY:
+    Serial.println("no reply");
+    break;
+  case RH_ROUTER_ERROR_UNABLE_TO_DELIVER:
+    Serial.println("unable to deliver");
+    break;
+  default:
+    Serial.println("unknown routing error");
+    break;
+  }
+}
+
+
 
 uint8_t data[] = "Hello World!";
 // Dont put this on the stack:
@@ -84,59 +104,42 @@ uint8_t buf[RH_MESH_MAX_MESSAGE_LEN];
 void loop()
 {
   
-  Serial.println("Sending to manager_mesh_server3");
+  Serial.println("Sending to e32_mesh_server1");
     
   // Send a message to a e32_mesh_server
   // A route to the destination will be automatically discovered.
-  if (manager.sendtoWait(data, sizeof(data), SERVER3_ADDRESS) == RH_ROUTER_ERROR_NONE)
+  uint8_t ret = manager.sendtoWait(data, sizeof(data), SERVER1_ADDRESS);
+  if (ret == RH_ROUTER_ERROR_NONE)
   {
     // It has been reliably delivered to the next node.
     // Now wait for a reply from the ultimate server
     uint8_t len = sizeof(buf);
     uint8_t from;    
+
+    //manager.printRoutingTable();
+    // listen for incoming messages. Wait a random amount of time before we transmit
+    // again to the next node
+    //delay(random(1000, 2000));    
     if (manager.recvfromAckTimeout(buf, &len, 3000, &from))
     {
       Serial.print("got reply from : 0x");
       Serial.print(from, HEX);
       Serial.print(": ");
       Serial.println((char*)buf);
+      // blink led when client receives a reply
+      digitalWrite(13, HIGH);
+      delay(200);
+      digitalWrite(13, LOW);
     }
     else
     {
       Serial.println("No reply, is e32_mesh_server1 running?");
     }
   }
-  else
-     Serial.println("sendtoWait failed. Are the intermediate mesh servers running?");
-
-  /*
-  Serial.println("Sending to e32_server");
-  // Send a message to e32_server
-  uint8_t data[] = "Hello World!";
-  driver.send(data, sizeof(data));
-  
-  driver.waitPacketSent();
-  // Now wait for a reply
-  uint8_t buf[RH_E32_MAX_MESSAGE_LEN];
-  uint8_t len = sizeof(buf);
-
-  if (driver.waitAvailableTimeout(2000)) // At 1kbps, reply can take a long time
-  { 
-    // Should be a reply message for us now   
-    if (driver.recv(buf, &len))
-    {
-      Serial.print("got reply: ");
-      Serial.println((char*)buf);
-    }
-    else
-    {
-      Serial.println("recv failed");
-    }
+  else{
+    printRoutingError(ret);
+     //Serial.println("sendtoWait failed. Are the intermediate mesh servers running?");
   }
-  else
-  {
-    Serial.println("No reply, is e32_server running?");
-  }
-  delay(1000);  
-  */   
+
+  delay(1000);
 }
