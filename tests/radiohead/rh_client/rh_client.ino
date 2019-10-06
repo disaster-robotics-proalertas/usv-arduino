@@ -1,4 +1,4 @@
-//#include <SPI.h> // Not actually used but needed to compile
+// client send a hello to the server and waits for a reply. If the reply is received, the LED blinks
 #include <RH_E32.h>
 #include "SoftwareSerial.h"
 
@@ -9,6 +9,8 @@ void setup()
 {
   Serial.begin(9600);
   while (!Serial) ;
+
+  pinMode(13,OUTPUT); // led pin
 
   mySerial.begin(9600); 
   //while (!mySerial) ;
@@ -85,6 +87,10 @@ void loop()
     {
       Serial.print("got reply: ");
       Serial.println((char*)buf);
+      // blink led when client receives a reply
+      digitalWrite(13, HIGH);
+      delay(200);
+      digitalWrite(13, LOW);
     }
     else
     {

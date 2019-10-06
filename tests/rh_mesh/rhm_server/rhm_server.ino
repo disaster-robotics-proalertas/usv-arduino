@@ -9,16 +9,15 @@
 // Mesh has much greater memory requirements, and you may need to limit the
 // max message length to prevent wierd crashes
 //RH_E32_h
-//#define RH_E32_MAX_PAYLOAD_LEN 30
+//#define RH_E32_MAX_PAYLOAD_LEN 50
 //RHDatagram_h
-//#define RH_MAX_MESSAGE_LEN 30
+//#define RH_MAX_MESSAGE_LEN 50
 //RHRouter_h
 //#define RH_DEFAULT_MAX_HOPS 10
 //#define RH_ROUTING_TABLE_SIZE 5
 
 #include <RHMesh.h>
 #include <RH_E32.h>
-//#include <SPI.h>
 #include "SoftwareSerial.h"
 
 // In this small artifical network of 4 nodes,
@@ -114,13 +113,6 @@ void loop()
     // again to the next node
     //delay(random(3000, 5000));
     // Send a reply back to the originator client
-    //uint8_t ret = manager.sendtoWait(data, sizeof(data), from);
     printRoutingError(manager.sendtoWait(data, sizeof(data), from));
-/*
-    if (ret != RH_ROUTER_ERROR_NONE){
-      printRoutingError(ret);
-    }else
-      Serial.println("loop sendtoWait success");
-      */
   }
 }

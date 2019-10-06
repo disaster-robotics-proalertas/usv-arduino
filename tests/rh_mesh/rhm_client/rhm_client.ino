@@ -5,19 +5,21 @@
 // It is designed to work with the other examples e32_mesh_server*
 // Hint: you can simulate other network topologies by setting the 
 // RH_TEST_NETWORK define in RHRouter.h
+/////////////
+// client send a hello to the server and waits for a reply. If the reply is received, the LED blinks
+/////////////
 
 // Mesh has much greater memory requirements, and you may need to limit the
 // max message length to prevent wierd crashes
 //RH_E32_h
-//#define RH_E32_MAX_PAYLOAD_LEN 30
+//#define RH_E32_MAX_PAYLOAD_LEN 50
 //RHDatagram_h
-//#define RH_MAX_MESSAGE_LEN 30
+//#define RH_MAX_MESSAGE_LEN 50
 //RHRouter_h
 //#define RH_DEFAULT_MAX_HOPS 10
 //#define RH_ROUTING_TABLE_SIZE 5
 
 #include <RHMesh.h>
-//#include <SPI.h>
 #include <RH_E32.h>
 #include "SoftwareSerial.h"
 
@@ -138,7 +140,6 @@ void loop()
   }
   else{
     printRoutingError(ret);
-     //Serial.println("sendtoWait failed. Are the intermediate mesh servers running?");
   }
 
   delay(1000);
