@@ -10,3 +10,5 @@ was modified to reduce RAM footprint
 //#define RH_DEFAULT_MAX_HOPS 10
 //#define RH_ROUTING_TABLE_SIZE 5
 
+SetNodeId is a utility (from https://github.com/nootropicdesign/lora-mesh) to set the nodes ID via EEPROM.
+It will be usefull in the future.
