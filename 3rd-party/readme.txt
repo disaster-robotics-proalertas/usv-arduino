@@ -1,4 +1,7 @@
 
+The PWM lib comes from https://github.com/xkam1x/Arduino-PWM-Reader.
+Some modifications were made, but probably works with default ones too.
+
 The RadioHead lib from https://github.com/adafruit/RadioHead
 was modified to reduce RAM footprint
 // changes to reduce ram usage:
