@@ -17,7 +17,7 @@ RHEncryptedDriver::RHEncryptedDriver(RHGenericDriver& driver, BlockCipher& block
 bool RHEncryptedDriver::recv(uint8_t* buf, uint8_t* len)
 {
     int h = 0; // Index of output _buffer
-
+    //Serial.println("RHEncryptedDriver::recv");
     bool status = _driver.recv(_buffer, len);
     if (status && buf && len)
     {
@@ -44,7 +44,8 @@ bool RHEncryptedDriver::recv(uint8_t* buf, uint8_t* len)
 	    }
 	}
     }
-
+    //RHGenericDriver::printBuffer("RX: ", buf,  *len);
+    //Serial.println(*len);
     return status;
 }
 

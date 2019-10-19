@@ -10,7 +10,6 @@ void setup()
   while (!Serial) ;
 
   mySerial.begin(9600); 
-  //while (!mySerial) ;
 
   if (!driver.init()) {
         Serial.println("init failed");  

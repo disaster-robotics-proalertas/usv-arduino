@@ -242,6 +242,7 @@ bool RH_E32::available()
 
 bool RH_E32::recv(uint8_t* buf, uint8_t* len)
 {
+    //Serial.println("RH_E32::recv");
     if (!available())
 	return false;
     if (buf && len)
@@ -253,7 +254,8 @@ bool RH_E32::recv(uint8_t* buf, uint8_t* len)
     }
 
 
-    //RHGenericDriver::printBuffer("RX: ", _buf,  _bufLen);
+    //RHGenericDriver::printBuffer("RX: ", buf,  *len);
+    //Serial.println(*len);
 
     clearRxBuf(); // This message accepted and cleared
     return true;
@@ -261,6 +263,7 @@ bool RH_E32::recv(uint8_t* buf, uint8_t* len)
 
 bool RH_E32::send(const uint8_t* data, uint8_t len)
 {
+  //Serial.println("RH_E32::send");
   if (len > RH_E32_MAX_MESSAGE_LEN)
     return false;
 

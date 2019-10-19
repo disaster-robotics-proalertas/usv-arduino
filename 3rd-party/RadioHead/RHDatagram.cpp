@@ -34,20 +34,24 @@ bool RHDatagram::sendto(uint8_t* buf, uint8_t len, uint8_t address)
 {
     //Serial.println("RHDatagram::sendto");
     setHeaderTo(address);
+    //RHGenericDriver::printBuffer("TX: ", buf,  len);
     return _driver.send(buf, len);
 }
 
 bool RHDatagram::recvfrom(uint8_t* buf, uint8_t* len, uint8_t* from, uint8_t* to, uint8_t* id, uint8_t* flags)
 {
-    //Serial.println("RHDatagram::recvfrom");
     if (_driver.recv(buf, len))
     {
+    //Serial.println("RHDatagram::recvfrom ok");
 	if (from)  *from =  headerFrom();
 	if (to)    *to =    headerTo();
 	if (id)    *id =    headerId();
 	if (flags) *flags = headerFlags();
+	//RHGenericDriver::printBuffer("RX: ", buf,  *len);
 	return true;
     }
+    //Serial.println("RHDatagram::recvfrom failed");
+    //RHGenericDriver::printBuffer("RX: ", buf,  *len);
     return false;
 }
 
