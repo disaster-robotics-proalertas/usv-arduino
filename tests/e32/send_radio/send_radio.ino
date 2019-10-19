@@ -1,6 +1,5 @@
 #include <SoftwareSerial.h>
 
-//SoftwareSerial mySerial(2, 3); // RX, TX
 SoftwareSerial mySerial(7, 6); //rx , tx
 byte cnt;
 byte buff[20];
@@ -55,5 +54,3 @@ void loop() {
  delay(500);
 
 }
-
-

@@ -1,4 +1,3 @@
-//#include <SPI.h> // Not actually used but needed to compile
 #include <RH_E32.h>
 #include "SoftwareSerial.h"
 
@@ -22,9 +21,11 @@ void setup()
   //if (!driver.getVersion())
   //Serial.println("Get version failed"); 
 
+  // Defaults parameters must be: C0, 0, 0, 1A, 17, 47
+
   RH_E32 :: Parameters my_params;
   if (!driver.readParameters(my_params))
-  Serial.println("Get parameters failed");
+    Serial.println("Get parameters failed");
 
   Serial.println(my_params.head, HEX);
   Serial.println(my_params.addh, HEX);

@@ -26,7 +26,7 @@ void setup()
 
   RH_E32 :: Parameters my_params;
   if (!driver.readParameters(my_params))
-  Serial.println("Get parameters failed");
+    Serial.println("Get parameters failed");
 
   Serial.println(my_params.head, HEX);
   Serial.println(my_params.addh, HEX);
