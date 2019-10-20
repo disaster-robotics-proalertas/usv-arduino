@@ -59,7 +59,7 @@ void setup()
     Serial.println("manager init succeded");  
   } 
   // 500 was not enough for timeout time with encryption. I had to use more
-  manager.setTimeout(800);
+  manager.setTimeout(1000);
 
   // Defaults parameters must be: C0, 0, 0, 1A, 17, 47
 
@@ -94,7 +94,7 @@ void loop()
     // Now wait for a reply from the server
     uint8_t len = sizeof(buf);
     uint8_t from;   
-    if (manager.recvfromAckTimeout(buf, &len, 2000, &from))
+    if (manager.recvfromAckTimeout(buf, &len, 3000, &from))
     {
       Serial.print("got reply from : 0x");
       Serial.print(from, HEX);
@@ -116,7 +116,14 @@ void loop()
   }
   // uncomment this to see if there are retransmissions wasting energy and bandwidth
   // perhaps the timeout must be increased to reduce retransmissions
-  //Serial.print("retrasmissions: ");
-  //Serial.println(manager.retransmissions());    
-  delay(4000);
+  Serial.print("retrasmissions: ");
+  Serial.println(manager.retransmissions());
+
+  // apparently it is necessary to clear this buffer from time to time. otherwise it 
+  // starts to accumulate errors and it stops working
+  driver.clearRxBuf();
+
+  // generates some random delay from 3000 to 4000
+  int temps=(analogRead(1)%100)*10+3000;
+  delay(temps);
 }

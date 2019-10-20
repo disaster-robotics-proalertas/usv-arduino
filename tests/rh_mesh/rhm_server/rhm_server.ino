@@ -95,6 +95,7 @@ switch(ret){
 uint8_t data[] = "hello back from server1";
 // Dont put this on the stack:
 uint8_t buf[RH_MESH_MAX_MESSAGE_LEN];
+uint8_t debugCounter=0;
 
 void loop()
 {
@@ -115,4 +116,14 @@ void loop()
     // Send a reply back to the originator client
     printRoutingError(manager.sendtoWait(data, sizeof(data), from));
   }
+  debugCounter= (debugCounter+1) % 10;
+  if (debugCounter>=9){
+	  manager.printRoutingTable();
+      // uncomment this to see if there are retransmissions wasting energy and bandwidth
+      // perhaps the timeout must be increased to reduce retransmissions
+      Serial.print("retrasmissions: ");
+      Serial.println(manager.retransmissions());	
+      driver.clearRxBuf();  
+  }
+  delay (100);
 }

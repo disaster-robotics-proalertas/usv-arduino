@@ -102,6 +102,7 @@ switch(ret){
 uint8_t data[] = "Hello World!";
 // Dont put this on the stack:
 uint8_t buf[RH_MESH_MAX_MESSAGE_LEN];
+uint8_t debugCounter=0;
 
 void loop()
 {
@@ -141,6 +142,18 @@ void loop()
   else{
     printRoutingError(ret);
   }
+  
+  debugCounter= (debugCounter+1) % 10;
+  if (debugCounter>=9){
+	  manager.printRoutingTable();
+      // uncomment this to see if there are retransmissions wasting energy and bandwidth
+      // perhaps the timeout must be increased to reduce retransmissions
+      Serial.print("retrasmissions: ");
+      Serial.println(manager.retransmissions());	
+      driver.clearRxBuf();  
+  }  
 
-  delay(1000);
+  // generates some random delay from 1000 to 2000
+  int temps=(analogRead(1)%100)*10+1000;
+  delay(temps);
 }

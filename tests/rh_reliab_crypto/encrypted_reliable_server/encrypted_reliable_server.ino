@@ -42,7 +42,7 @@ void setup() {
     Serial.println("manager init succeded");  
   } 
   // 500 was not enough for timeout time with encryption. I had to use more
-  manager.setTimeout(800);
+  manager.setTimeout(1000);
   
   // Defaults parameters must be: C0, 0, 0, 1A, 17, 47
 
@@ -83,10 +83,16 @@ void loop()
       // Send a reply back to the originator client
       if (!manager.sendtoWait(data, sizeof(data), from)){
         Serial.println("sendtoWait failed");       }
-      // uncomment this to see if there are retransmissions wasting energy and bandwidth
-      // perhaps the timeout must be increased to reduce retransmissions
-      //Serial.print("retrasmissions: ");
-      //Serial.println(manager.retransmissions());
+    }else{
+      Serial.println("recvfromAck failed");
     }
+    // uncomment this to see if there are retransmissions wasting energy and bandwidth
+    // perhaps the timeout must be increased to reduce retransmissions
+    Serial.print("retrasmissions: ");
+    Serial.println(manager.retransmissions());
   }
+  // apparently it is necessary to clear this buffer from time to time. otherwise it 
+  // starts to accumulate errors and it stops working  
+  driver.clearRxBuf();
+  delay (100);
 }
