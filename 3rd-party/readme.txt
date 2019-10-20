@@ -15,3 +15,6 @@ was modified to reduce RAM footprint
 
 SetNodeId is a utility (from https://github.com/nootropicdesign/lora-mesh) to set the nodes ID via EEPROM.
 It will be usefull in the future.
+
+Crypto libraries for arduino is from 
+https://github.com/rweather/arduinolibs/tree/master/libraries
