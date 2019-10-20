@@ -47,6 +47,9 @@ void setup()
     Serial.println("manager init succeded");  
   } 
 
+  // 500 was not enough for timeout time with encryption. I had to use more
+  manager.setTimeout(1000);
+  
   // Defaults parameters must be: C0, 0, 0, 1A, 17, 47
 
   RH_E32 :: Parameters my_params;
@@ -95,5 +98,17 @@ void loop()
   }
   else
     Serial.println("sendtoWait failed");
-  delay(500);
+
+  // uncomment this to see if there are retransmissions wasting energy and bandwidth
+  // perhaps the timeout must be increased to reduce retransmissions
+  Serial.print("retrasmissions: ");
+  Serial.println(manager.retransmissions());
+
+  // apparently it is necessary to clear this buffer from time to time. otherwise it 
+  // starts to accumulate errors and it stops working
+  driver.clearRxBuf();
+
+  // generates some random delay from 1000 to 2000
+  int temps=(analogRead(1)%100)*10+1000;
+  delay(temps);
 }

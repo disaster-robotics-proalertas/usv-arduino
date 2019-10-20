@@ -31,7 +31,10 @@ void setup()
   } else {
     Serial.println("manager init succeded");  
   } 
-
+  
+  // 500 was not enough for timeout time with encryption. I had to use more
+  manager.setTimeout(1000);
+  
   // Defaults parameters must be: C0, 0, 0, 1A, 17, 47
 
   RH_E32 :: Parameters my_params;
@@ -51,6 +54,7 @@ void setup()
 uint8_t data[] = "And hello back to you";
 // Dont put this on the stack:
 uint8_t buf[RH_E32_MAX_MESSAGE_LEN];
+uint8_t debugCounter=0;
 
 void loop()
 {
@@ -69,6 +73,18 @@ void loop()
       // Send a reply back to the originator client
       if (!manager.sendtoWait(data, sizeof(data), from))
         Serial.println("sendtoWait failed");
+    }else{
+      Serial.println("recvfromAck failed");
     }
   }
+
+  debugCounter= (debugCounter+1) % 51;
+  if (debugCounter>=50){
+    // uncomment this to see if there are retransmissions wasting energy and bandwidth
+    // perhaps the timeout must be increased to reduce retransmissions
+    Serial.print("retrasmissions: ");
+    Serial.println(manager.retransmissions());  
+    driver.clearRxBuf();  
+  }  
+  delay (100);  
 }
