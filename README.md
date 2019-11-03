@@ -1,5 +1,5 @@
 # usv-arduino
-Arduino-based backup processor for LSA's boats
+Arduino-based backup processor for LSA's boats 
 
 ## Description
 Every USV in our Lab is based on Raspberry Pi boards running ROS. To prevent data corruption, our implementation uses a tiny board which provides power control and signals to prevent that happens. In parallel, others software capabilities could be added as a backup data link providing power control and Raspberry data exchange.
