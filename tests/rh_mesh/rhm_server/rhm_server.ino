@@ -31,7 +31,7 @@ SoftwareSerial mySerial(7, 6); //rx , tx
 RH_E32  driver(&mySerial, 4, 5, 8); // m0,m1,aux
 
 // Class to manage message delivery and receipt, using the driver declared above
-RHMesh manager(driver, SERVER1_ADDRESS);
+RHMesh manager(driver, SERVER2_ADDRESS);
 
 void setup() 
 {
@@ -41,7 +41,10 @@ void setup()
   while (!Serial) ;
 
   mySerial.begin(9600); 
-  
+
+  // 500 was not enough for timeout time with encryption. I had to use more
+  manager.setTimeout(1000);
+    
   if (!manager.init()){
         Serial.println("init failed");  
   } else {

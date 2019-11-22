@@ -7,11 +7,40 @@
 
 #include <RHReliableDatagram.h>
 #include <RH_E32.h>
-#include "SoftwareSerial.h"
 
-SoftwareSerial mySerial(7, 6); //rx , tx
+// select board to set the pinout
+//#define ARDUINO_NANO
+#define ARDUINO_MEGA
+
+#ifdef ARDUINO_NANO
+  #include "SoftwareSerial.h"
+  #define BOARD "arduino_nano"
+#endif
+#ifdef ARDUINO_MEGA
+  #define BOARD "arduino_mega"
+#endif
+
+#ifdef ARDUINO_NANO
+  #define RX_PIN 7
+  #define TX_PIN 6
+  #define E32_AUX_PIN 8
+  #define E32_M0_PIN 4
+  #define E32_M1_PIN 5
+#endif
+#ifdef ARDUINO_MEGA
+  #define RX_PIN 7  // not used. Using Serial3
+  #define TX_PIN 6  // not used. Using Serial3
+  #define E32_AUX_PIN 2
+  #define E32_M0_PIN 3
+  #define E32_M1_PIN 4
+#endif
+
+#if ARDUINO_NANO
+SoftwareSerial Serial3(RX_PIN, TX_PIN); //rx , tx
+#endif
+
 // radio driver
-RH_E32  driver(&mySerial, 4, 5, 8); // m0,m1,aux
+RH_E32  driver(&Serial3, E32_M0_PIN, E32_M1_PIN, E32_AUX_PIN); // m0,m1,aux
 
 #define CLIENT_ADDRESS 1
 #define SERVER_ADDRESS 2
@@ -24,7 +53,8 @@ void setup()
   Serial.begin(9600);
   while (!Serial) ;
 
-  mySerial.begin(9600);
+  Serial3.begin(9600);
+  while (!Serial3);
   
   if (!manager.init()){
     Serial.println("manager init failed");

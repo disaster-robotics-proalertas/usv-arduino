@@ -47,6 +47,9 @@ void setup()
 
   pinMode(13,OUTPUT); // led pin
 
+  // 500 was not enough for timeout time with encryption. I had to use more
+  manager.setTimeout(1000);
+  
   if (!manager.init()){
     Serial.println("manager init failed");
   } else {
