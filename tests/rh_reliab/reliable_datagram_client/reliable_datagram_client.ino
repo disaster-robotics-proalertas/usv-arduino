@@ -15,42 +15,17 @@ https://github.com/hallard/RadioHead -- fork for rpi
  https://github.com/exmorse/pyRadioHeadRF95
  https://github.com/exmorse/pyRadioHeadNRF24
 https://www.airspayce.com/mikem/arduino/RadioHead/serial_reliable_datagram_client_8pde-example.html
-https://www.airspayce.com/mikem/arduino/RadioHead/serial_reliable_datagram_server_8pde-example.html
+https://www.airspayce.com/mikem/arduino/RadioHead/serial_reliable_datagram_server_8pde-example.html 
 */
 
 #include <RHReliableDatagram.h>
 #include <RH_E32.h>
 
 // select board to set the pinout
-#define ARDUINO_NANO
+//#define ARDUINO_NANO
 //#define ARDUINO_MEGA
-
-#ifdef ARDUINO_NANO
-  #include "SoftwareSerial.h"
-  #define BOARD "arduino_nano"
-#endif
-#ifdef ARDUINO_MEGA
-  #define BOARD "arduino_mega"
-#endif
-
-#ifdef ARDUINO_NANO
-  #define RX_PIN 7
-  #define TX_PIN 6
-  #define E32_AUX_PIN 8
-  #define E32_M0_PIN 4
-  #define E32_M1_PIN 5
-#endif
-#ifdef ARDUINO_MEGA
-  #define RX_PIN 7  // not used. Using Serial3
-  #define TX_PIN 6  // not used. Using Serial3
-  #define E32_AUX_PIN 2
-  #define E32_M0_PIN 3
-  #define E32_M1_PIN 4
-#endif
-
-#ifdef ARDUINO_NANO
-SoftwareSerial Serial3(RX_PIN, TX_PIN); //rx , tx
-#endif
+#define BLUEPILL_F103C8
+#include "../../common/platform_def.h"
 
 // radio driver
 RH_E32  driver(&Serial3, E32_M0_PIN, E32_M1_PIN, E32_AUX_PIN); // m0,m1,aux
