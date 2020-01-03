@@ -9,10 +9,8 @@
 #include <RH_E32.h>
 
 // select board to set the pinout
-//#define ARDUINO_NANO
-//#define ARDUINO_MEGA
-#define BLUEPILL_F103C8
-#include "../../common/platform_def.h"
+// SUPPORTED PLATFORMS: ARDUINO_AVR_NANO, ARDUINO_AVR_MEGA2560, ARDUINO_BLUEPILL_F103C8
+#include "platform_def.h"
 
 // radio driver
 RH_E32  driver(&Serial3, E32_M0_PIN, E32_M1_PIN, E32_AUX_PIN); // m0,m1,aux

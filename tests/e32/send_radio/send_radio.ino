@@ -1,9 +1,6 @@
-
 // select board to set the pinout
-//#define ARDUINO_NANO
-//#define ARDUINO_MEGA
-#define BLUEPILL_F103C8
-#include "../../common/platform_def.h"
+// SUPPORTED PLATFORMS: ARDUINO_AVR_NANO, ARDUINO_AVR_MEGA2560, ARDUINO_BLUEPILL_F103C8
+#include "platform_def.h"
 
 byte cnt;
 byte buff[20];
