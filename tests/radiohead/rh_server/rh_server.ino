@@ -1,15 +1,14 @@
 #include <RH_E32.h>
-#include "SoftwareSerial.h"
+#include "platform_def.h"
 
-SoftwareSerial mySerial(7, 6); //rx , tx
-RH_E32  driver(&mySerial, 4, 5, 8); // m0,m1,aux
+RH_E32  driver(&Serial3, E32_M0_PIN, E32_M1_PIN, E32_AUX_PIN); 
 
 void setup() 
 {
   Serial.begin(9600);
   while (!Serial) ;
 
-  mySerial.begin(9600); 
+  Serial3.begin(9600); 
 
   if (!driver.init()) {
         Serial.println("init failed");  
@@ -67,12 +66,16 @@ void setup()
  driver.print_tx_header();   
  */
 }
+
+uint8_t data[] = "And hello back to you";
+// Dont put this on the stack:
+uint8_t buf[RH_E32_MAX_MESSAGE_LEN];
+
 void loop() 
 {
   if (driver.available())
   {
     // Should be a message for us now   
-    uint8_t buf[RH_E32_MAX_MESSAGE_LEN];
     uint8_t len = sizeof(buf);
     if (driver.recv(buf, &len))
     {
@@ -81,7 +84,6 @@ void loop()
       Serial.println((char*)buf);
 
       // Send a reply
-      uint8_t data[] = "And hello back to you";
       driver.send(data, sizeof(data));
       driver.waitPacketSent();
       Serial.println("Sent a reply");

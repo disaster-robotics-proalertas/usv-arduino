@@ -1,19 +1,18 @@
-// client send a hello to the server and waits for a reply. If the reply is received, the LED blinks
+// client send a hello to the server and waits for a reply. If the reply is received, the LED blinks 
 #include <RH_E32.h>
-#include "SoftwareSerial.h"
+#include "platform_def.h"
 
-SoftwareSerial mySerial(7, 6); //rx , tx
-RH_E32  driver(&mySerial, 4, 5, 8); // m0,m1,aux
+RH_E32  driver(&Serial3, E32_M0_PIN, E32_M1_PIN, E32_AUX_PIN); 
 
 void setup() 
 {
   Serial.begin(9600);
   while (!Serial) ;
 
-  pinMode(13,OUTPUT); // led pin
+  pinMode(LED_BUILTIN,OUTPUT); // led pin
 
-  mySerial.begin(9600); 
-  //while (!mySerial) ;
+  Serial3.begin(9600); 
+  //while (!Serial3) ;
 
   if (!driver.init()) {
         Serial.println("init failed");  
@@ -68,29 +67,38 @@ void setup()
  */
 }
 
+uint8_t data[] = "Hello World!";
+uint8_t buf[RH_E32_MAX_MESSAGE_LEN];
+byte cnt_sent=0;
+byte cnt_recv=0;
+
 void loop() 
 {
-  Serial.println("Sending to e32_server");
+  sprintf(buf, "Sending msg %02d to e32_server",cnt_sent);
+  Serial.println((char*)buf);
   // Send a message to e32_server
-  uint8_t data[] = "Hello World!";
-  driver.send(data, sizeof(data));
+  sprintf(buf, "%s_%02d",data,cnt_sent);
+  driver.send(buf, strlen(buf));
+  cnt_sent = (cnt_sent + 1) % 15;
   
   driver.waitPacketSent();
   // Now wait for a reply
-  uint8_t buf[RH_E32_MAX_MESSAGE_LEN];
   uint8_t len = sizeof(buf);
 
-  if (driver.waitAvailableTimeout(2000)) // At 1kbps, reply can take a long time
+  if (driver.waitAvailableTimeout(1000)) // At 1kbps, reply can take a long time
   { 
     // Should be a reply message for us now   
     if (driver.recv(buf, &len))
     {
       Serial.print("got reply: ");
-      Serial.println((char*)buf);
+      Serial.print((char*)buf);
+      Serial.print("_");
+      Serial.println(cnt_recv);
+      cnt_recv = (cnt_recv + 1) % 15;
       // blink led when client receives a reply
-      digitalWrite(13, HIGH);
+      digitalWrite(LED_BUILTIN, HIGH);
       delay(200);
-      digitalWrite(13, LOW);
+      digitalWrite(LED_BUILTIN, LOW);
     }
     else
     {

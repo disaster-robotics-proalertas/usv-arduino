@@ -23,7 +23,7 @@
   #define BOARD "STM32F103C8T6 - Blue Pill"
   #define RX_PIN PB11  // not used. Using Serial3
   #define TX_PIN PB10  // not used. Using Serial3
-  #define E32_AUX_PIN 2 // not used
+  #define E32_AUX_PIN PA0 
   #define E32_M0_PIN PC14
   #define E32_M1_PIN PC15  
   HardwareSerial Serial3(USART3); //on PB11 PB10
