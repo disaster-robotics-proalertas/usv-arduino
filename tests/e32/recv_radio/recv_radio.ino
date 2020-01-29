@@ -14,13 +14,14 @@ void setup() {
 
   Serial3.begin(9600);
   pinMode(E32_AUX_PIN,INPUT);  // aux pin
-  pinMode(13,OUTPUT); // led pin
+  pinMode(LED_BUILTIN,OUTPUT); // led pin
   pinMode(E32_M0_PIN,OUTPUT); // m0
   pinMode(E32_M1_PIN,OUTPUT); // m1
 
   // get configuration parameters
   digitalWrite(E32_M0_PIN,HIGH);
   digitalWrite(E32_M1_PIN,HIGH);
+  delay(10); // delay required by stm32
   buff[0] = 0xc1;
   buff[1] = 0xc1;
   buff[2] = 0xc1;
@@ -54,9 +55,9 @@ void loop() {
    c = Serial3.read();
    Serial.println(c);
    
-   digitalWrite(13, HIGH);
+   digitalWrite(LED_BUILTIN, HIGH);
    delay(200);
-   digitalWrite(13, LOW);
+   digitalWrite(LED_BUILTIN, LOW);
    delay(200);
  }
 
