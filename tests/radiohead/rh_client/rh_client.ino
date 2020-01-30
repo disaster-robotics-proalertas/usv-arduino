@@ -74,11 +74,11 @@ byte cnt_recv=0;
 
 void loop() 
 {
-  sprintf(buf, "Sending msg %02d to e32_server",cnt_sent);
+  sprintf((char*)buf, "Sending msg %02d to e32_server",cnt_sent);
   Serial.println((char*)buf);
   // Send a message to e32_server
-  sprintf(buf, "%s_%02d",data,cnt_sent);
-  driver.send(buf, strlen(buf));
+  sprintf((char*)buf, "%s_%02d",data,cnt_sent);
+  driver.send(buf, strlen((char*)buf));
   cnt_sent = (cnt_sent + 1) % 15;
   
   driver.waitPacketSent();
