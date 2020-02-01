@@ -12,8 +12,8 @@ void setup()
   pinMode(LED_BUILTIN,OUTPUT); // led pin
 
   Serial3.begin(9600); 
-  //while (!Serial3) ;
 
+  // init is equivalent to: getVersion, readParameters, C2, 
   if (!driver.init()) {
         Serial.println("init failed");  
   } else {
@@ -21,11 +21,14 @@ void setup()
   }
 
   //if (!driver.getVersion())
-  //Serial.println("Get version failed"); 
+  //  Serial.println("Get version failed"); 
 
   RH_E32 :: Parameters my_params;
+  // these command bellow are protected in the original RH distribution. just comment the line with 'protected' to enable compilation
   if (!driver.readParameters(my_params))
     Serial.println("Get parameters failed");
+  else
+    Serial.println("Get parameters OK");
 
   Serial.println(my_params.head, HEX);
   Serial.println(my_params.addh, HEX);
@@ -33,6 +36,7 @@ void setup()
   Serial.println(my_params.sped, HEX);
   Serial.println(my_params.chan, HEX);
   Serial.println(my_params.option, HEX);
+  
 /*
   my_params.addh = 15;
   my_params.addl = 15;
@@ -65,6 +69,8 @@ void setup()
  }
  driver.print_tx_header();   
  */
+  Serial.print("Setup finished!");
+
 }
 
 uint8_t data[] = "Hello World!";

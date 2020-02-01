@@ -10,17 +10,18 @@ void setup()
 
   Serial3.begin(9600); 
 
+  // init is equivalent to: getVersion, readParameters, C2, 
   if (!driver.init()) {
         Serial.println("init failed");  
   } else {
         Serial.println("init succeded");  
   }
-
+  
   //if (!driver.getVersion())
-  //Serial.println("Get version failed"); 
+  //  Serial.println("Get version failed"); 
 
   // Defaults parameters must be: C0, 0, 0, 1A, 17, 47
-
+  // these command bellow are protected in the original RH distribution. just comment the line with 'protected' to enable compilation
   RH_E32 :: Parameters my_params;
   if (!driver.readParameters(my_params))
     Serial.println("Get parameters failed");
@@ -33,6 +34,7 @@ void setup()
   Serial.println(my_params.sped, HEX);
   Serial.println(my_params.chan, HEX);
   Serial.println(my_params.option, HEX);
+  
 /*
   my_params.addh = 15;
   my_params.addl = 15;
@@ -65,6 +67,8 @@ void setup()
  }
  driver.print_tx_header();   
  */
+ 
+ Serial.print("Setup finished!");
 }
 
 uint8_t data[] = "And hello back to you";
