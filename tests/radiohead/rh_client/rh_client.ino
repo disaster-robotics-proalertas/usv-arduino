@@ -69,7 +69,7 @@ void setup()
  }
  driver.print_tx_header();   
  */
-  Serial.print("Setup finished!");
+  Serial.println("Setup finished!");
 
 }
 

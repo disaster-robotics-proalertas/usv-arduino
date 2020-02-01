@@ -27,7 +27,7 @@ void setup()
   while (!Serial) ;
 
   Serial3.begin(9600);
-  while (!Serial3);
+  //while (!Serial3);
   
   if (!manager.init()){
     Serial.println("manager init failed");
@@ -43,7 +43,9 @@ void setup()
   RH_E32 :: Parameters my_params;
   if (!driver.readParameters(my_params))
     Serial.println("Get parameters failed");
-
+  else
+    Serial.println("Get parameters OK");
+    
   Serial.println(my_params.head, HEX);
   Serial.println(my_params.addh, HEX);
   Serial.println(my_params.addl, HEX);
@@ -51,7 +53,7 @@ void setup()
   Serial.println(my_params.chan, HEX);
   Serial.println(my_params.option, HEX);
 
-  Serial.println("Ending setup");
+  Serial.println("Setup finished!");
 }
 
 uint8_t data[] = "And hello back to you";
@@ -65,8 +67,8 @@ void loop()
   {
     // Wait for a message addressed to us from the client
     uint8_t len = sizeof(buf);
-    uint8_t from;
-    if (manager.recvfromAck(buf, &len, &from))
+    uint8_t from, ret;
+    if (ret = manager.recvfromAck(buf, &len, &from))
     {
       Serial.print("got request from : 0x");
       Serial.print(from, HEX);
@@ -78,6 +80,7 @@ void loop()
         Serial.println("sendtoWait failed");
     }else{
       Serial.println("recvfromAck failed");
+      Serial.println(ret);
     }
   }
 
@@ -85,8 +88,9 @@ void loop()
   if (debugCounter>=50){
     // uncomment this to see if there are retransmissions wasting energy and bandwidth
     // perhaps the timeout must be increased to reduce retransmissions
-    Serial.print("retrasmissions: ");
+    Serial.println("retrasmissions: ");
     Serial.println(manager.retransmissions());  
+    Serial.println(manager.retries());
     driver.clearRxBuf();  
   }  
   delay (100);  

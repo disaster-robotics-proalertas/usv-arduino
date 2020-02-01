@@ -68,7 +68,7 @@ void setup()
  driver.print_tx_header();   
  */
  
- Serial.print("Setup finished!");
+ Serial.println("Setup finished!");
 }
 
 uint8_t data[] = "And hello back to you";

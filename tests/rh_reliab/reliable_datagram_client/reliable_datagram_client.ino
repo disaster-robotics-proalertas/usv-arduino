@@ -39,10 +39,10 @@ void setup()
   Serial.begin(9600);
   while (!Serial) ;
 
-  pinMode(13,OUTPUT); // led pin
+  pinMode(LED_BUILTIN,OUTPUT); // led pin
 
   Serial3.begin(9600);
-  while (!Serial3); 
+  //while (!Serial3); 
    
   if (!manager.init()){
     Serial.println("manager init failed");
@@ -58,7 +58,9 @@ void setup()
   RH_E32 :: Parameters my_params;
   if (!driver.readParameters(my_params))
     Serial.println("Get parameters failed");
-
+  else
+    Serial.println("Get parameters OK");
+    
   Serial.println(my_params.head, HEX);
   Serial.println(my_params.addh, HEX);
   Serial.println(my_params.addl, HEX);
@@ -66,19 +68,30 @@ void setup()
   Serial.println(my_params.chan, HEX);
   Serial.println(my_params.option, HEX);
 
-  Serial.println("Ending setup");
+  Serial.println("Setup finished!");
 }
 
 uint8_t data[] = "Hello World!";
 // Dont put this on the stack:
 uint8_t buf[RH_E32_MAX_MESSAGE_LEN];
+byte cnt_sent=0;
+byte cnt_recv=0;
 
 void loop()
 {
-  Serial.println("Sending to e32_reliable_datagram_server");
-    
+  sprintf((char*)buf, "Sending msg %02d to e32_reliable_datagram_server",cnt_sent);
+  Serial.println((char*)buf);
+  // Send a message to e32_server
+  sprintf((char*)buf, "%s_%02d",data,cnt_sent);
+  //manager.send(buf, strlen((char*)buf));
+  cnt_sent = (cnt_sent + 1) % 15;
+  
+  //manager.waitPacketSent();
+  // Now wait for a reply
+  //uint8_t len = sizeof(buf);
+      
   // Send a message to manager_server
-  if (manager.sendtoWait(data, sizeof(data), SERVER_ADDRESS))
+  if (manager.sendtoWait(buf, strlen((char*)buf), SERVER_ADDRESS))
   {
     // Now wait for a reply from the server
     uint8_t len = sizeof(buf);
@@ -88,11 +101,14 @@ void loop()
       Serial.print("got reply from : 0x");
       Serial.print(from, HEX);
       Serial.print(": ");
-      Serial.println((char*)buf);
+      Serial.print((char*)buf);
+      Serial.print("_");
+      Serial.println(cnt_recv);
+      cnt_recv = (cnt_recv + 1) % 15;      
       // blink led when client receives a reply
-      digitalWrite(13, HIGH);
+      digitalWrite(LED_BUILTIN, HIGH);
       delay(200);
-      digitalWrite(13, LOW);      
+      digitalWrite(LED_BUILTIN, LOW);      
     }
     else
     {
