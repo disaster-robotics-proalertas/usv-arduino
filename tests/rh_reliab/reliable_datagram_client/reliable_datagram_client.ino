@@ -83,13 +83,8 @@ void loop()
   Serial.println((char*)buf);
   // Send a message to e32_server
   sprintf((char*)buf, "%s_%02d",data,cnt_sent);
-  //manager.send(buf, strlen((char*)buf));
   cnt_sent = (cnt_sent + 1) % 15;
   
-  //manager.waitPacketSent();
-  // Now wait for a reply
-  //uint8_t len = sizeof(buf);
-      
   // Send a message to manager_server
   if (manager.sendtoWait(buf, strlen((char*)buf), SERVER_ADDRESS))
   {

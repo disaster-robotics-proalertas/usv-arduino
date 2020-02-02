@@ -23,29 +23,32 @@
 #include <RH_E32.h>
 #include "SoftwareSerial.h"
 
+// select board to set the pinout
+// SUPPORTED PLATFORMS: ARDUINO_AVR_NANO, ARDUINO_AVR_MEGA2560, ARDUINO_BLUEPILL_F103C8
+#include "platform_def.h"
+
 // In this small artifical network of 4 nodes,
 #define CLIENT_ADDRESS 1
 #define SERVER1_ADDRESS 2
 #define SERVER2_ADDRESS 3
 #define SERVER3_ADDRESS 4
 
-// Singleton instance of the radio driver
-SoftwareSerial mySerial(7, 6); //rx , tx
-RH_E32  driver(&mySerial, 4, 5, 8); // m0,m1,aux
+// radio driver
+RH_E32  driver(&Serial3, E32_M0_PIN, E32_M1_PIN, E32_AUX_PIN); // m0,m1,aux
 
 // Class to manage message delivery and receipt, using the driver declared above
 RHMesh manager(driver, CLIENT_ADDRESS);
 
 void setup() 
 {
-  //randomSeed(analogRead(0));
+  randomSeed(analogRead(PA1));
 
   Serial.begin(9600);
   while (!Serial) ;
 
-  mySerial.begin(9600);
+  Serial3.begin(9600);
 
-  pinMode(13,OUTPUT); // led pin
+  pinMode(LED_BUILTIN,OUTPUT); // led pin
 
   // 500 was not enough for timeout time with encryption. I had to use more
   manager.setTimeout(1000);
@@ -61,7 +64,9 @@ void setup()
   RH_E32 :: Parameters my_params;
   if (!driver.readParameters(my_params))
   Serial.println("Get parameters failed");
-
+  else
+    Serial.println("Get parameters OK");
+    
   Serial.println(my_params.head, HEX);
   Serial.println(my_params.addh, HEX);
   Serial.println(my_params.addl, HEX);
@@ -69,7 +74,7 @@ void setup()
   Serial.println(my_params.chan, HEX);
   Serial.println(my_params.option, HEX);
 
-  Serial.println("Ending setup");
+  Serial.println("Setup finished!");
 }
 
 
@@ -106,36 +111,50 @@ uint8_t data[] = "Hello World!";
 // Dont put this on the stack:
 uint8_t buf[RH_MESH_MAX_MESSAGE_LEN];
 uint8_t debugCounter=0;
+byte cnt_sent=0;
+byte cnt_recv=0;
 
 void loop()
 {
+  sprintf((char*)buf, "Sending msg %02d to e32_mesh_server1",cnt_sent);
+  Serial.println((char*)buf);
+  // Send a message to e32_server
+  sprintf((char*)buf, "%s_%02d_%02d",data,cnt_sent,SERVER1_ADDRESS);
+  cnt_sent = (cnt_sent + 1) % 15;
   
-  Serial.println("Sending to e32_mesh_server1");
-    
   // Send a message to a e32_mesh_server
   // A route to the destination will be automatically discovered.
-  uint8_t ret = manager.sendtoWait(data, sizeof(data), SERVER1_ADDRESS);
+  uint8_t ret = manager.sendtoWait(buf, strlen((char*)buf), SERVER1_ADDRESS);
   if (ret == RH_ROUTER_ERROR_NONE)
   {
     // It has been reliably delivered to the next node.
     // Now wait for a reply from the ultimate server
     uint8_t len = sizeof(buf);
-    uint8_t from;    
+    uint8_t from, dest, id, flags;    
 
     //manager.printRoutingTable();
     // listen for incoming messages. Wait a random amount of time before we transmit
     // again to the next node
     //delay(random(1000, 2000));    
-    if (manager.recvfromAckTimeout(buf, &len, 3000, &from))
+    if (manager.recvfromAckTimeout(buf, &len, 3000, &from, &dest, &id, &flags))
     {
       Serial.print("got reply from : 0x");
       Serial.print(from, HEX);
+      Serial.print(", dest: ");
+      Serial.print(dest, HEX);
+      Serial.print(", id: ");
+      Serial.print(id, HEX);
+      Serial.print(", flags: ");            
+      Serial.print(flags, HEX);
       Serial.print(": ");
-      Serial.println((char*)buf);
+      Serial.print((char*)buf);
+      Serial.print("_");
+      Serial.println(cnt_recv);
+      cnt_recv = (cnt_recv + 1) % 15;      
       // blink led when client receives a reply
-      digitalWrite(13, HIGH);
+      digitalWrite(LED_BUILTIN, HIGH);
       delay(200);
-      digitalWrite(13, LOW);
+      digitalWrite(LED_BUILTIN, LOW);
     }
     else
     {
@@ -146,8 +165,8 @@ void loop()
     printRoutingError(ret);
   }
   
-  debugCounter= (debugCounter+1) % 10;
-  if (debugCounter>=9){
+  debugCounter= (debugCounter+1) % 100;
+  if (debugCounter>=90){
 	  manager.printRoutingTable();
       // uncomment this to see if there are retransmissions wasting energy and bandwidth
       // perhaps the timeout must be increased to reduce retransmissions
@@ -157,6 +176,6 @@ void loop()
   }  
 
   // generates some random delay from 1000 to 2000
-  int temps=(analogRead(1)%100)*10+1000;
-  delay(temps);
+  //int temps=(analogRead(PA1)%100)*10+1000;
+  delay(100);
 }

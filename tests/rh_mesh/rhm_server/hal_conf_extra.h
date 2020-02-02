@@ -1,0 +1,1 @@
+../../common/hal_conf_extra.h

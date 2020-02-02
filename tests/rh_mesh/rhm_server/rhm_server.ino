@@ -20,27 +20,30 @@
 #include <RH_E32.h>
 #include "SoftwareSerial.h"
 
+// select board to set the pinout
+// SUPPORTED PLATFORMS: ARDUINO_AVR_NANO, ARDUINO_AVR_MEGA2560, ARDUINO_BLUEPILL_F103C8
+#include "platform_def.h"
+
 // In this small artifical network of 4 nodes,
 #define CLIENT_ADDRESS 1
 #define SERVER1_ADDRESS 2
 #define SERVER2_ADDRESS 3
 #define SERVER3_ADDRESS 4
 
-// Singleton instance of the radio driver
-SoftwareSerial mySerial(7, 6); //rx , tx
-RH_E32  driver(&mySerial, 4, 5, 8); // m0,m1,aux
+// radio driver
+RH_E32  driver(&Serial3, E32_M0_PIN, E32_M1_PIN, E32_AUX_PIN); // m0,m1,aux
 
 // Class to manage message delivery and receipt, using the driver declared above
-RHMesh manager(driver, SERVER2_ADDRESS);
+RHMesh manager(driver, SERVER1_ADDRESS);
 
 void setup() 
 {
-  randomSeed(analogRead(0));
+  //randomSeed(analogRead(0));
   
   Serial.begin(9600);
   while (!Serial) ;
 
-  mySerial.begin(9600); 
+  Serial3.begin(9600); 
 
   // 500 was not enough for timeout time with encryption. I had to use more
   manager.setTimeout(1000);
@@ -55,7 +58,9 @@ void setup()
 
   RH_E32 :: Parameters my_params;
   if (!driver.readParameters(my_params))
-  Serial.println("Get parameters failed");
+    Serial.println("Get parameters failed");
+  else
+    Serial.println("Get parameters OK");
 
   Serial.println(my_params.head, HEX);
   Serial.println(my_params.addh, HEX);
@@ -64,7 +69,7 @@ void setup()
   Serial.println(my_params.chan, HEX);
   Serial.println(my_params.option, HEX);
   
-  Serial.println("Ending setup");
+  Serial.println("Setup finished!");
 }
 
 // help to debug routing errors
@@ -119,14 +124,14 @@ void loop()
     // Send a reply back to the originator client
     printRoutingError(manager.sendtoWait(data, sizeof(data), from));
   }
-  debugCounter= (debugCounter+1) % 10;
-  if (debugCounter>=9){
+  debugCounter= (debugCounter+1) % 100;
+  if (debugCounter>=99){
 	  manager.printRoutingTable();
-      // uncomment this to see if there are retransmissions wasting energy and bandwidth
-      // perhaps the timeout must be increased to reduce retransmissions
-      Serial.print("retrasmissions: ");
-      Serial.println(manager.retransmissions());	
-      driver.clearRxBuf();  
+    // uncomment this to see if there are retransmissions wasting energy and bandwidth
+    // perhaps the timeout must be increased to reduce retransmissions
+    Serial.print("retrasmissions: ");
+    Serial.println(manager.retransmissions());	
+    driver.clearRxBuf();  
   }
   delay (100);
 }
